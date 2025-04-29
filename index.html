@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spend Elon Musk Money</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.4,0,0.2,1), transform 1s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ff00, #00ccff, #00ff00);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .money-display {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s cubic-bezier(0.4,0,0.2,1);
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
+        }
+
+        .item-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 24px 0 #00ff00cc, 0 2px 8px 0 rgba(0,0,0,0.12);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .item-category {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #00ff00;
+            font-size: 1.1rem;
+        }
+
+        .purchased {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: #00ff00;
+            transition: box-shadow 0.3s, background 0.3s;
+        }
+
+        .reset-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #ff0000;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .buy-btn, .sell-btn {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.1s;
+            outline: none;
+        }
+
+        .buy-btn {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .buy-btn:hover {
+            background: #00cc00;
+        }
+
+        .buy-btn:active {
+            transform: scale(0.93);
+        }
+
+        .sell-btn {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .sell-btn:hover {
+            background: #ff0000;
+        }
+
+        .sell-btn:active {
+            transform: scale(0.93);
+        }
+
+        .item-quantity {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Spend Elon Musk Money</h1>
+            <div class="money-display">$<span id="money">400,000,000,000</span></div>
+        </header>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="items-bought">0</div>
+                <div>Items Bought</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="money-spent">$0</div>
+                <div>Money Spent</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="money-left">$400,000,000,000</div>
+                <div>Money Left</div>
+            </div>
+        </div>
+
+        <div class="items-grid" id="items-grid">
+            <!-- Items will be added here by JavaScript -->
+        </div>
+
+        <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+    </div>
+
+    <!-- Popup Notification -->
+    <div id="popup" style="display:none;position:fixed;top:40px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:18px 36px;border-radius:12px;font-size:1.2rem;z-index:1000;box-shadow:0 4px 24px #00ff00a0;transition:opacity 0.4s;opacity:0;"></div>
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas" style="position:fixed;pointer-events:none;top:0;left:0;width:100vw;height:100vh;z-index:999;"></canvas>
+    <!-- Sound Effects -->
+    <audio id="buy-sound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa4c3e.mp3" preload="auto"></audio>
+    <audio id="sell-sound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa4c3e.mp3" preload="auto"></audio>
+
+    <script>
+        const items = [
+            {
+                name: "UNIQLO Basic T-Shirt",
+                category: "Clothes",
+                price: 15,
+                image: "https://media-hosting.imagekit.io/17a15f227cb14ddb/UNIQLO%20Basic%20T-Shirt.jpeg?Expires=1840529855&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=vvIIkrYO-mIBk8T4L7T14EVZhalc7Lyc~Nm4wh3tFHqeOnOq6f3AwFNCy-k7lyJfg1m8MJ2vfGGr7qeGB4Gpw-U6O-d-xJ5edOHwLVCpJY6D1FLWWjdkOEFhGL1J9dceYiE46DYkdP6jlIAIqIjrtUamVCp84ZDh~0IB5m1wk7pNSePNxZOmlUptZMkldZwJRsCFbtQRxkgi9EYhKeEkR1BsIvuCeoDRCS3F6cdVNxNvrRFRMxlmGacMys0JuH9GL-Yk9w2W2ZUrz7JfWEoRgz418uN4TMFzsb3Y4miVWr8OofRVijB3knmZN5fxBsN91zJC30Y2Q0enEKpai~51dw__",
+                quantity: 0
+            },
+            {
+                name: "Timex Weekender Watch",
+                category: "Watch",
+                price: 40,
+                image: "https://media-hosting.imagekit.io/fa7d1799a4cd45ca/Timex%20Weekender%20Watch.jpeg?Expires=1840529855&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=qwZTukf~xFFI3MzjwB8B~pO2zWU0lC6ZNRdpZESQPczfUZ8X-E-FWA1rHoHgsbIXCAv0fe2EPMUaAxwxduJcMFsIWH-VKlfs6iFMtkmyhR2bL77K1yHBhESu8gRsmRmWYdgfv0J2sndKt5TE9b4ym9w7LdeTNu1iHdNUAebpZRKGzglWDFGDz2f8w8GWkbpZD43hIpc33aFIqEnCwfR-zdutoNWGnFbaiRMzXzIOGkswgnIPVEc63PDGIvIY0z11BsWXP43mxwjucmBDhM2h-rxaBn-8DqnBBfa~Wf~GE-jXDzo1vadt~tNfZgsElfsUTc4alanyeV3IGfYtEXBohg__",
+                quantity: 0
+            },
+            {
+                name: "Adidas Sneakers",
+                category: "Clothes/Shoes",
+                price: 75,
+                image: "https://media-hosting.imagekit.io/9ad4aaf47bcd461e/Adidas%20Sneakers.jpeg?Expires=1840529857&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=iYPh1agjvcJsx3RvKmAoof2AoECE7CNr5adju~mn1NytUszq7DWi1b2YtwnQjRKxoaXIP9qB6RM6~SQzCHhrmhSgkL1OUEEjIRvCQeUV3bzNdNNgGcGsSe~x~EBh1wrs-w8dgFmqT8sTPVo1fTwdBErNfnq4tRLvSRsrJZ8ZGN0Vq8rYdyLo6Cw~yOOX-w1tzW5Mjr6kgWOTJhnRjJ6Qmjw4JIcnkf-eGFhodumwJOn3F8y9AVv~sS3XgzvJDvUVwjWVuWHhcL-vgq1HVrtAJEodWB-ov4YCJTwpq9ghjJ2sOvO7XoZ28VR~zNOeF12YceQHDZtV-gFVZsdRLhBrmA__",
+                quantity: 0
+            },
+            {
+                name: "Casio G-Shock",
+                category: "Watch",
+                price: 99,
+                image: "https://media-hosting.imagekit.io/0c5b4b72ca83487d/Casio%20G-Shock.jpeg?Expires=1840529859&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=VfL~XO3ysWoRvfeq~JejdC9CCYH4~Cku-IvpwmE2gBQpCOO3Rtf54nxORJOMurrO4ZTLHyn9AeitBFZ8mZht4p3nIOWzVdW9m6NM4Uzdb6RTORwNHIQd8wALhrVMZsCAbPbinsBOVI9Adl554yKDJqhLigY5qn2UhDe0JrFgw6K6~dB-biJbK8eCgj9cOGsPrBO4StyL3JBsANAlRUok8EcEXImTQKQ0PuvZH2XsRL6ZhfPnNPjKamI1Wa~PtF1pZ8FeMyItyf~nSBKLhIWQ9EBgPF-M~iEZcG-KqwKu~oPHkLxEacHsklUOyg~2bJOXy~FIn4hdIh6C6nuUdiZEyg__",
+                quantity: 0
+            },
+            {
+                name: "Samsung Galaxy A14",
+                category: "Phone",
+                price: 130,
+                image: "https://media-hosting.imagekit.io/cc5c22d2e9e8437d/Samsung%20Galaxy%20A14.jpeg?Expires=1840529861&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=rx-0MeFk5wE9BqZzs-k7jppwSOhq3mw58GMZbQ1WjIWxy51itvDOHjN0LELDAsRGORbbKPDsy635clsla7NLmT9pPs7zYYwIRYXAlCWDjZzpUoElgrDECu13onVgQO-oXMm-gFaYAt1mhGN9nYRapIn0SP471kwpByFs4QLenARW5Ad8bHJz4aUcnlctNXmG5DYnNOKZFBH0YrmKn0aH6vRP8iH72ty49ris2Vt7BqiMKuGEmsWiCoOQ1lR1CZEPeqiGDkJuT5Ol3bUtAm1NwzSG1bSY0goROnhPi2B8BNwMHYZCwmgcfWpa6ytAGWK9DRAej00N-IVIQB9VtIGJMA__",
+                quantity: 0
+            },
+            {
+                name: "Fossil Gen 6 Smartwatch",
+                category: "Watch",
+                price: 200,
+                image: "https://media-hosting.imagekit.io/56b14743e97a47a9/Fossil%20Gen%206%20Smartwatch.jpeg?Expires=1840529862&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=cyRRSWezZoFqP~5xqr8uNefOhFM4nEHYWSo2dE4Nsd1ABUHssx7dQHzB1i~bXPj11ezi6U1qzoQfbhX1wfe~i0RU2Na5Jmz8gmuD-lQKda-K3wQl996yfFJ~ySJhmukTa9UfKKJ1n7VB~noieY-RqiRry0rarwPN8DVeBN-93MhyOmsXGSubRWr9PGZPl1JfVnNCtTfpXsjq0HAOA07Opih2QHNMYFXqD7zHhwRxWeic~jshtJqV5Ok6WeXblmz3cUxWZleYs1vw8aUu1fjqZHTEyccOcWtlUm73~yDujg9QscJ0H8hIULi-j8CnjVmavbU6fl6QRDKHIqmZLSQ~qg__",
+                quantity: 0
+            },
+            {
+                name: "Levi's Denim Jacket",
+                category: "Clothes",
+                price: 250,
+                image: "https://media-hosting.imagekit.io/54e157cdb6244175/Levi%E2%80%99s%20Denim%20Jacket.jpeg?Expires=1840529864&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=b3U3G8LYPyotnnb655vP3G~uV6Cqadk7R5G0kr0hcAF1e8~HiT55VoIT-9VukpBM4kYvw-aePsGkGw05TzgN0-4oCAx5XR0fIJfqjA51mm~Bz8Ynegu0MMPNHawRpB0Mr7jLkuLJnIPbsYwDG0VKUf~JbXGYxaqpgHgjOTAafz7DEM64Pzpl3peBfLxS~za~0hxQR4PQdV0jrtC2qt1DVBt5hf3DHo79GouwJPtBU7R0ov-Bgdr5lKLLnjiK~AscaJVYnUAwlSp9LrqdNJDP-aoie87B7cPdZa9H6cpIS6i~MXmVmuzyWTfTjg9eHewzq1dthsNplJAnin7hoCtD7g__",
+                quantity: 0
+            },
+            {
+                name: "iPhone SE (2022)",
+                category: "Phone",
+                price: 429,
+                image: "https://media-hosting.imagekit.io/0250f1ed8f10485f/iPhone%20SE%20(2022).jpeg?Expires=1840529866&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=mL-i-pB9saJ2qngZrOBmF~4tiS7xH12M8ouXZvqq7tZ8HNhNvM7oMEz6hYSqcZ3dRbroeoXC4wcUZLdA99GNdZHSvnwIG-BzcPfrgdHzQ~VGIgROZET2o1RogTrafKFciWybO5gcu9s5Ndlz4KanBDlq3o2YU5M4fGQ4GJie-8lAucY1unWZa7hxagW6BbBd5RxU3vINOb8yTA~ZHAdih7uBeOUUkaphLM7g1DweOELATrmh3zkpUPT4lZ--99a168N91HtuP9JFqFMRk5g9ulJXgX9dzqRfGkMZ-6DFq4WoW4H5i4Gvllcz7CEz8gsNFoecjCWq-4HW4u4WQLtp3A__",
+                quantity: 0
+            },
+            {
+                name: "Samsung Galaxy S23",
+                category: "Phone",
+                price: 799,
+                image: "https://media-hosting.imagekit.io/cf0c0e1e46854316/Samsung%20Galaxy%20S23.jpeg?Expires=1840529867&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=1IUQqTa3SrsEhTB1od6LAtWSDC-1mrzcN68d-55ZyvWM75u8C-w3kz2XmqOeP58TH7mXoGQhByu1vDjKYlhQ24aiIV1vgpaSev1WH92XuO1TeVItR-MXMuaiOooucp9oMGiO21BmIqn6y1GQGg5X6ammQqUL68Lvd-QjQj6tT22f8XZ2JuFdUimrnE0ejO6nSakl8dGASLNm~Ge2Iu1bWMqQqaH4KEQuTf8r9F36hLBRJ3DhYiO7MLVJAZwf8kdz~~s9GaZHZzBCe4c2nDR-To1lQdfMGdy5~8lzbyK568Tvl8DSKhoxuOit5Gf2Y2hQ3JfjBbEcRzHkCkbMKCkrnw__",
+                quantity: 0
+            },
+            {
+                name: "Apple iPhone 15 Pro",
+                category: "Phone",
+                price: 999,
+                image: "https://media-hosting.imagekit.io/47352c7012f64273/Apple%20iPhone%2015%20Pro.jpeg?Expires=1840529869&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=ryRSthM6f0zgRSpTWzywwUJKhHlP2-TvZG0~0Ih51~zAczyAd3VhoG8dvCmr7eAhCioATrXWS~OGgoZtURLPQJdWspyLKnrUIgJbxNCqb-ahxgOUCemtvOBUWVJQtFzhUvXOyDNrKTnXRRntNrQJD-wLcXxqZfZgMpaaFfZ4sBtf4gVlcbrfkwaCFzAAYC4buKAKcdWb~6Q2OV4NNdfJ4X5o-eqIewC0uYLuFV987N~proOnlkDJ7Ngkbv05w71CLXb7~Bu8T2ZskzZaiCmUQMP-4br9WzdUM1y~DKeKXRvlF1yeOzU1OU~59BTI9BTfOx-PXfQIDbLVSNapac4SYA__",
+                quantity: 0
+            },
+            {
+                name: "Rolex Oyster Perpetual",
+                category: "Watch",
+                price: 6500,
+                image: "https://media-hosting.imagekit.io/76343d6dc33b4971/Rolex%20Oyster%20Perpetual.jpeg?Expires=1840529870&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=AvE2wgUzNjKr2Qeoho1eJ9Gn43RqVsKzmyFejmd0p5hGi39E4GTREI-qngvcg~8O6j9eUVDH261S0rpxrQ5dYzHmh-YwpzbKZz3Dkmmps5onxm9bA4lxf-ANg4dsl6S2LAXTgpy2fRZrnydiyIRPOJ7vrRVCbbNkEWLaHTLPiGQLs3Z0lVkLlmacSpFKqS8IfXKgPvm6hW-G9PNBsKzN5-P7MM~HZbWVwdP9PidD2jGTmxuXYYNTeb3pKG9T~TQn3Fq32UxdT-UflsO9byDeMj1o7d2N9VPJlM12VSvcX-NONcQZ9Ydpd9-9AFgGsIcWfaWSXQioHUAi3wjTRCEQkA__",
+                quantity: 0
+            },
+            {
+                name: "Yamaha R15 V4",
+                category: "Vehicle (Motorbike)",
+                price: 2000,
+                image: "https://media-hosting.imagekit.io/7d3986ce88d44012/Yamaha%20R15%20V4.jpeg?Expires=1840529872&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=hPjnaSvcW7ydHaEofJ04zp4Wy0boIZILFg00apwsYUMeVOrZOc7Te8DeznMu3HTsc6mnSHfkFowqFMs4KHP2CvASro0el17J9vU-2UpBrn-B3Mo10QrrhDkEiPRQGSMBvtovZR0AeStSbCgf9yPTeIvebQXU-mbuaFMu2MSJAXdV6b5qaNPwLs9q904o-RfkMW7JKAlkdStGqLKqUj9rmYcEsn9yl4q8HQyU38T7gm~0E6q1FcIK5QgRGSSMw~6dYCFd1wi0iCHCBNvsevECPlQ~FPaNFwuWbErPemK5uLfcfM5iVxtPzm9ajLGPjIUGSTQ~FCs10Ky~yndajTHsWg__",
+                quantity: 0
+            },
+            {
+                name: "Royal Enfield Classic 350",
+                category: "Vehicle (Motorbike)",
+                price: 2500,
+                image: "https://media-hosting.imagekit.io/d76457afef28459e/Royal%20Enfield%20Classic%20350.jpeg?Expires=1840529873&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=RLzL4GpdflwBDhy9GyEkiuKuwEqz0boQfH-P9jT4wxHZ~jRuS4Pvlb86vGRbHmKpy81rMFkCNu6RENCINgktv37ZPUZnqjbd8GIxFkyE7iTa3WMxdyKYlSH4mLL8h~EHIFdTBLc44UoJCQ1tLfQ2rMVVuWI3~zED2JVsG7KxqpiYVfxlm~fR2zcZg9PqhpA-U4tASP9Nxx6-RWghqrQQJ4fS4y52y-MvHGFvCMNOYI~ak6r7tnc6tLKt8B0w~ue7NkFh65WDDSYAmrOw~0T0gHDp1gaFiyVRua6yMQiH1r6smg-tm8EFo~Rz-SURD9ZkTUfASpS7I2jJDkDreK2OZw__",
+                quantity: 0
+            },
+            {
+                name: "Honda Civic",
+                category: "Vehicle (Car)",
+                price: 25000,
+                image: "https://media-hosting.imagekit.io/98db7d60fde046d7/Honda%20Civic.jpeg?Expires=1840529874&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=XuOZimBf7YPoXqtX3gf2eGtGuDPkA80lLycnqmH2P30gt0zqJLE261NkGj615wt19Kr3WdOM-D9NYPtSNEMFI7DQioKNGWGdIecT8TyrSyORns0yVeXj0XOIAoZkTeALyOanoyLdGu5IfAT84SMeUbgG4vlZ0Yn5jdwHrzq4fmIa7RcVr4gnheDyYOloFl8VhUmYvyOfVqMlaP5wUPnli~PpvDQ7lHfXgNTJ-wn4rWiIqC3~TNoOo6Y3vHgkcJN8ohSHEdDP8Mw9kafzs9iGUpkaqAgnBqY6hz2cXa1W-zEuwGY5l~7lMrj6NK2a1lYHI6qQAeaK6D2K7JSlUr5q3w__",
+                quantity: 0
+            },
+            {
+                name: "Tesla Model 3",
+                category: "Vehicle (Car)",
+                price: 39000,
+                image: "https://media-hosting.imagekit.io/ffe4415aa80a457d/Tesla%20Model%203.jpeg?Expires=1840529876&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=U4rJBce9WNXRgaMlRPpSP~E5tvXQg29r8cuMJCxAiD9krWsovH12gi4LNDr8RsYx4nWHO9X6mQ6U4gHKKrqf3jB939IXPTqn9M0N24MOO5d3SsHXtTH3mExAMVCBdj42bSY63s5Jzj6yC7JkfsHjgmHuLikTBZIDO711PRH-mW4CGN9K1kIeK4WwLKAkPYYCxyFYctT-P3xdc691rRgE0KG9JMDXWEFhDxGZBs5g0X2YKUofHQ6jWj6gD3rK~JrYlvcF~4plhmS8ljRWV3VZx7y2v-uIP7pj0t-1c8mcuKTtq9b1Tn2AJE0HxbaFDeL0QdSYmbjg-M2jOsAFUAf8GQ__",
+                quantity: 0
+            },
+            {
+                name: "BMW X5",
+                category: "Vehicle (Luxury SUV)",
+                price: 65000,
+                image: "https://media-hosting.imagekit.io/7799b77a35f0448c/BMW%20X5.jpeg?Expires=1840529878&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=LUQW2bMc7vr6A5MzdqPJ-zdH2Ciy8bKtXUMuXGXGNv9OAsTGF95mpduSgwyIIjWmTCattFvJ0-m4XkAY2I1g9VBy8TcdbihzYIkrt04exyDuGmuHW1Nh~H~KaHTI02uJeoOJpbJv0Qr5i40H1i2kLlomWF7abWGRZouKOoHagsBwpx6OwvuSjPdHyOBKqpViC7Cq8LioI5V1d2MHmWh8nYmi0si-Hz0SzrEVZBlxS96aBfA2bjxQyzcg6r-yZUqsOFNmMIWfTShZCYkCIuFJYkQUeRpFF6hyFRs2cntRpi01gMg-ZIf5PSIyLvWO1bck-keDs8YUY3Rd06dS90bRIA__",
+                quantity: 0
+            },
+            {
+                name: "Mercedes-Benz S-Class",
+                category: "Vehicle (Luxury Sedan)",
+                price: 110000,
+                image: "https://media-hosting.imagekit.io/2aab796c462f4565/Mercedes-Benz%20S-Class.jpeg?Expires=1840529879&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=uSTEgiUDM9CdlmNMW-tMyI5cqglgJkGqi52UXPvGE1E1SkTefjx0zKKSt-l4sZztZ~7SI8vxZTB7fgDoFflibYl0Iy4jniga4ZLWYkVYTPJ3Wk8DtPWuXCdUjLR6E2ouLoMmNDIRjQUnRanG3IY1F1Rd~MB5E21CKcQk7v2Q1Z2GSjcSs7XUuPcrBoHEyQEK4yWvGgSZTjbiakyAH69IlnUSmgYristBSuC-5FnTldDwOL-YwVKEgnVsFYLfo4GeGJ5ngH2KEqeGvS4BcuU0b3m2WdrWUc6OKcZSBYdwa1590deA7ixMeRkALcH7N77R1NA-sWtwDcKZBqlEeUj4-g__",
+                quantity: 0
+            },
+            {
+                name: "Yacht Azimut 53 Flybridge",
+                category: "Yacht",
+                price: 1500000,
+                image: "https://media-hosting.imagekit.io/85405621ad994240/Yacht%20Azimut%2053%20Flybridge.jpeg?Expires=1840529880&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=oTJjGePxib70x~kHv5LaTsIH8uscrXm7SFg5YJqJIK7vEkj2gpQo7wC5heWdPo4T48jsVum4x2nFS479Mb9w7VpaQ5oZNNFC64rbDHHpKSUEL07K~KMqmz0wnreF-IvRbV5xOj52EKtUQqE4Wv6R7ed0pk5Bp~eayl6ck30bWPJAukw6ZxOpGXbmWIPn35c~6s~aZnmJ-5T3UQ0PdFYCKOOeDe6X22P2BKorsoGT492FVWWuM3AdMw4~3ez9MvwwjcZOqtIRAY9GYVb-mtQtF98s4MuDszLVvvxxS1P4ZAhPGqN8hvJ-HMXA5sXbARnocGr9wbYciSqYemv-HKhinw__",
+                quantity: 0
+            },
+            {
+                name: "Gulfstream G650",
+                category: "Plane (Private Jet)",
+                price: 65000000,
+                image: "https://media-hosting.imagekit.io/0e05ac4b5e9f491d/Gulfstream%20G650.jpeg?Expires=1840529881&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Vwip5QxLUvkVsv0y2Stahb8CYj3gHZjSF~Yrw8dHD--xB2jbOiG8ZkDGjM75WCEvwaiUJtDa22Ixx8j51aeOxlWGYXjFst2KDg0lBIfqMfKrShcBE1Gq-fDZF1XDYjO3v-PMLJQtyFE1EGv-2ldVRotDzEuH2HkImqMcorteLcVQ9gqXZTlbjOerkUW8Mgl-6h6zQtMUFGAIMTMtKciMFL4UZ54xG2dUSXaXGKXkCOcyj2uKLv6oBDXUNM-rWxvc97Ej~BJ5hZuc3WMRSSg2n6bC4TJbV3MUMFkVt0UIzEp2soK5LS59mU2WuTPLKsgKpBIb45bskn19DwXr5UCeMA__",
+                quantity: 0
+            },
+            {
+                name: "Boeing 737-800",
+                category: "Plane (Commercial Aircraft)",
+                price: 106000000,
+                image: "https://media-hosting.imagekit.io/f5f2719c596147fe/Boeing%20737-800.jpeg?Expires=1840529883&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=u7C965sakh1g2H5r3prtyOa1KOrPbrcoWIIn6UGjfaX0uN7kg8DfItgFmf1d2aC2jQMOKHKla-e4G6g26--xaN7fAFlXftBmmH8tg1wUu8MAh7T0CBA1RSPCQVKCQvNcJEwph7KrAXTjBbXCG-BX9b~x4XFthXmTpFhwk4BF2SRbuD5YATBSjy0Q6Pl5nAlklaDSgXpbtTlnQjaOBb6i3z1~pfcpgdswg2CQ8rqO3oZtXWN9q-xO4g3nuwdCUL2iKMbLOS3bToEJKAtrA6ymSdUxsy2nnDpFdUOaCwmYG8yhY2tabpkiWkCFZil3bRtKhFm6Gca-PkpfzeKyOs0KbA__",
+                quantity: 0
+            }
+        ];
+
+        let money = 400000000000;
+        let itemsBought = 0;
+        let moneySpent = 0;
+
+        function formatMoney(amount) {
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function updateDisplay() {
+            document.getElementById('money').textContent = formatMoney(money);
+            document.getElementById('items-bought').textContent = itemsBought;
+            document.getElementById('money-spent').textContent = '$' + formatMoney(moneySpent);
+            document.getElementById('money-left').textContent = '$' + formatMoney(money);
+        }
+
+        function showPopup(message) {
+            const popup = document.getElementById('popup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            setTimeout(() => { popup.style.opacity = 1; }, 10);
+            setTimeout(() => {
+                popup.style.opacity = 0;
+                setTimeout(() => { popup.style.display = 'none'; }, 400);
+            }, 1200);
+        }
+
+        // Simple confetti burst
+        function confettiBurst() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let confetti = [];
+            for (let i = 0; i < 80; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height/2,
+                    r: Math.random() * 8 + 4,
+                    d: Math.random() * 80 + 40,
+                    color: `hsl(${Math.random()*360},100%,60%)`,
+                    tilt: Math.random() * 10 - 5
+                });
+            }
+            let frame = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confetti.forEach(c => {
+                    ctx.beginPath();
+                    ctx.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = c.color;
+                    ctx.fill();
+                });
+            }
+            function update() {
+                confetti.forEach(c => {
+                    c.y += Math.cos(frame/10 + c.d) + 2 + c.r/8;
+                    c.x += Math.sin(frame/15) + c.tilt/2;
+                });
+            }
+            function animate() {
+                draw();
+                update();
+                frame++;
+                if (frame < 60) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        function playSound(type) {
+            let audio;
+            if (type === 'buy') audio = document.getElementById('buy-sound');
+            else audio = document.getElementById('sell-sound');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play();
+            }
+        }
+
+        function buyItem(index) {
+            const item = items[index];
+            if (money >= item.price) {
+                money -= item.price;
+                moneySpent += item.price;
+                itemsBought++;
+                item.quantity++;
+                updateDisplay();
+                updateItemCard(index);
+                showPopup(`Bought: ${item.name}`);
+                playSound('buy');
+            } else {
+                alert("Not enough money!");
+            }
+        }
+
+        function sellItem(index) {
+            const item = items[index];
+            if (item.quantity > 0) {
+                money += item.price;
+                moneySpent -= item.price;
+                itemsBought--;
+                item.quantity--;
+                updateDisplay();
+                updateItemCard(index);
+                showPopup(`Sold: ${item.name}`);
+                playSound('sell');
+                flashMoneyLeftRed();
+                flashMoneySpentRed();
+            } else {
+                alert("You don't have any of this item to sell!");
+            }
+        }
+
+        function updateItemCard(index) {
+            const item = items[index];
+            const card = document.getElementById(`item-${item.name}`);
+            if (card) {
+                const quantityDisplay = card.querySelector('.item-quantity');
+                if (quantityDisplay) {
+                    quantityDisplay.textContent = `Owned: ${item.quantity}`;
+                }
+                if (item.quantity > 0) {
+                    card.classList.add('purchased');
+                } else {
+                    card.classList.remove('purchased');
+                }
+            }
+        }
+
+        function createItemCard(item, index) {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.id = `item-${item.name}`;
+            card.innerHTML = `
+                <img src="${item.image}" alt="${item.name}" class="item-image">
+                <div class="item-name">${item.name}</div>
+                <div class="item-category">${item.category}</div>
+                <div class="item-price">$${formatMoney(item.price)}</div>
+                <div class="item-quantity">Owned: ${item.quantity}</div>
+                <div class="item-actions">
+                    <button class="buy-btn" onclick="buyItem(${index})">Buy</button>
+                    <button class="sell-btn" onclick="sellItem(${index})">Sell</button>
+                </div>
+            `;
+            return card;
+        }
+
+        function initializeGame() {
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+            items.forEach((item, index) => {
+                grid.appendChild(createItemCard(item, index));
+            });
+            updateDisplay();
+        }
+
+        function resetGame() {
+            money = 400000000000;
+            itemsBought = 0;
+            moneySpent = 0;
+            items.forEach((item, index) => {
+                item.quantity = 0;
+                const card = document.getElementById(`item-${item.name}`);
+                if (card) {
+                    card.classList.remove('purchased');
+                    const quantityDisplay = card.querySelector('.item-quantity');
+                    if (quantityDisplay) {
+                        quantityDisplay.textContent = `Owned: 0`;
+                    }
+                }
+            });
+            updateDisplay();
+        }
+
+        function flashMoneyLeftRed() {
+            const el = document.getElementById('money-left');
+            el.classList.add('flash-red');
+            setTimeout(() => el.classList.remove('flash-red'), 500);
+        }
+
+        function flashMoneySpentRed() {
+            const el = document.getElementById('money-spent');
+            el.classList.add('flash-red');
+            setTimeout(() => el.classList.remove('flash-red'), 500);
+        }
+
+        // Initialize the game when the page loads
+        window.onload = function() {
+            initializeGame();
+            setTimeout(function() {
+                document.querySelector('.container').classList.add('visible');
+            }, 100); // slight delay for smoothness
+        }
+    </script>
+</body>
+</html> 

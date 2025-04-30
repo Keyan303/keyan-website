@@ -38,6 +38,24 @@
             margin-bottom: 40px;
         }
 
+        .musk-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 10px auto;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            display: block;
+        }
+
+        .money-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         h1 {
             font-size: 3rem;
             margin-bottom: 10px;
@@ -212,7 +230,10 @@
     <div class="container">
         <header>
             <h1>Spend Elon Musk Money</h1>
-            <div class="money-display">$<span id="money">400,000,000,000</span></div>
+            <div class="money-image-container">
+                <div class="money-display">$<span id="money">400,000,000,000</span></div>
+                <img src="https://media-hosting.imagekit.io/a9afa70677174dd7/elon-musk.jpg?Expires=1840530935&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=vmdsv-2WrAgLFZMYkcNJ7PGstFuNnQmbObH7JnE173qYxj7WhCcLW60nc8jdXtm5T6002Ka05jD4lvkird6ry8eTMOr~Ywc8J-UxtYPd0YxdyO6dBVUlvzVBnmwpSaXNcUqQeU27RWQh5zjWrUNIeQIETWe5S1FUO3vQR4UOyqahiyOummTOKuThzVWrNnpP7qQV7Dfvd17K60Nr0N3e6RoVO2a-a3LbzKl1JLsC0RIAj~SoB2EpuCohM4Xi5Wyp22i-JqNng3owInJhYNJ5eon~o04pOYcURzSyTLi~ztBp2D7lyW6Fs30mIWV5TcrlA-04j78LSlmeNFokd3sBew__" alt="Elon Musk" class="musk-image">
+            </div>
         </header>
 
         <div class="stats">
@@ -236,6 +257,20 @@
 
         <button class="reset-btn" onclick="resetGame()">Reset Game</button>
     </div>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5299634585687587"
+         crossorigin="anonymous"></script>
+    <!-- Musk Money Spend -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-5299634585687587"
+         data-ad-slot="9706771499"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
     <!-- Popup Notification -->
     <div id="popup" style="display:none;position:fixed;top:40px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:18px 36px;border-radius:12px;font-size:1.2rem;z-index:1000;box-shadow:0 4px 24px #00ff00a0;transition:opacity 0.4s;opacity:0;"></div>
